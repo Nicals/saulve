@@ -71,8 +71,8 @@ def mount_package_directory(path: Path) -> None:
     """
     package_path = path.resolve().parent
 
-    for python_path in sys.path:
-        python_path = Path(python_path)
+    for sys_path in sys.path:
+        python_path = Path(sys_path)
         #  I could not find if python path are resolved by default. It seems
         # they are but didn't find confirmation about this (did not want to
         # search this for hours though)...

@@ -20,6 +20,7 @@ aoc = "aoc.cli:cli"
 
 [project.optional-dependencies]
 dev = [
+  "mypy ~= 0.991",
   "pytest ~= 7.2",
 ]
 
@@ -27,4 +28,7 @@ dev = [
 Homepage = "https://github.com/Nicals/aoc"
 
 [tool.setuptools]
+packages = ["aoc"]
+
+[tool.mypy]
 packages = ["aoc"]

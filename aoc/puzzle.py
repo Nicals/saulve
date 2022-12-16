@@ -27,6 +27,7 @@ class Solution(Generic[T]):
             T: Input data that will be passed as argument to `first_star` and
                 `second_star`.
         """
+        raise NotImplementedError("'parse_input_file' must be implemented.")
 
     def first_star(self, puzzle: T) -> int | str | None:
         """
