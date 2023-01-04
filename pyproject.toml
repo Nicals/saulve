@@ -3,12 +3,12 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "aoc"
+name = "saulve"
 version = "0.1dev"
 authors = [
   { name="Nicolas Appriou", email="nicolas.appriou@gmail.com" }
 ]
-description = "A framework for the Advent of Code yearly challenge"
+description = "A framework for computer programming challenges"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
@@ -16,7 +16,7 @@ dependencies = [
 ]
 
 [project.scripts]
-aoc = "aoc.cli:cli"
+saulve = "saulve.cli:cli"
 
 [project.optional-dependencies]
 dev = [
@@ -25,10 +25,10 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/Nicals/aoc"
+Homepage = "https://github.com/Nicals/saulve"
 
 [tool.setuptools]
-packages = ["aoc"]
+packages = ["saulve"]
 
 [tool.mypy]
-packages = ["aoc"]
+packages = ["saulve"]

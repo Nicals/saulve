@@ -8,8 +8,8 @@ import types
 from typing import NamedTuple
 
 from .base import Challenge, ChallengeLoader
-from aoc import Puzzle
-from aoc.errors import PuzzleModuleError, PuzzleNotFound, ValidationError
+from saulve import Puzzle
+from saulve.errors import PuzzleModuleError, PuzzleNotFound, ValidationError
 
 
 YEAR_REGEX = re.compile(r'^year_(?P<year>\d{4})$')

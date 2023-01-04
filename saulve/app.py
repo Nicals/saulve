@@ -1,7 +1,7 @@
 from importlib import import_module
 
 from .challenges.base import Challenge, ChallengeLoader
-from .errors import AOCError, ChallengeNotFound
+from .errors import SaulveError, ChallengeNotFound
 
 
 __all__ = ['App', 'import_app']
@@ -18,10 +18,11 @@ class App:
     ) -> None:
         """
         Raises:
-            AOCError: If a challenge is already registered with the given id.
+            SaulveError: If a challenge is already registered with the given
+                id.
         """
         if challenge_id in self.loaders:
-            raise AOCError(
+            raise SaulveError(
                 f"A challenge with id '{challenge_id} is already registered."
             )
 
@@ -45,17 +46,17 @@ class App:
 def import_app(app_module_name: str) -> App:
     """
     Raises:
-        AOCError: If the module has no 'app' attribute or the 'app' attribute
-            is not an instance of the App class.
+        SaulveError: If the module has no 'app' attribute or the 'app'
+            attribute is not an instance of the App class.
     """
     app_module = import_module(app_module_name)
 
     if not hasattr(app_module, 'app'):
-        raise AOCError(f"No 'app' found in {app_module_name}")
+        raise SaulveError(f"No 'app' found in {app_module_name}")
 
     app = app_module.app
 
     if not isinstance(app, App):
-        raise AOCError(f"{app} is not an instance of {App.__class__}.")
+        raise SaulveError(f"{app} is not an instance of {App.__class__}.")
 
     return app

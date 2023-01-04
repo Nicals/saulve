@@ -9,7 +9,7 @@ from .errors import PuzzleNotFound, ValidationError
     '-a', '--app',
     'app_module',
     required=True,
-    envvar='AOC_CHALLENGES',
+    envvar='SAULVE_CHALLENGES',
     help='Application module.',
 )
 @click.argument('chall')

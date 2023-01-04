@@ -1,5 +1,5 @@
-Advent Of Code
-==============
+Saulve
+======
 
 A framework for computer programming challenge.
 
@@ -19,7 +19,7 @@ A module puzzle must have a `puzzle` attribute and some registered solution step
 
 ```python
 # file: my_challenges/advent_of_code/year_2022/day_01.py
-from aoc import Puzzle
+from saulve import Puzzle
 
 puzzle = Puzzle(name='Calorie Counting', puzzle_input='...')
 
@@ -32,26 +32,26 @@ def solve_second_star(puzzle_input):
   ...
 ```
 
-To make AOC aware of the advent of code puzzle, an application instance must be created and the
+To make saulve aware of the advent of code puzzle, an application instance must be created and the
 advent of code challenge registered into it.
 
 ```python
 # file my_challenge/__init__.py
-from aoc import App
-from aoc.challenges.advent_of_code import AdventOfCodeLoader
+from saulve import App
+from saulve.challenges.advent_of_code import AdventOfCodeLoader
 from . import advent_of_code
 
 app = App()
 
-app.register_challenge('my-aoc-challenge', AdventOfCodeLoader(advent_of_code))
+app.register_challenge('aoc', AdventOfCodeLoader(advent_of_code))
 ```
 
-The aoc cli can now be used to solve challenges.
+The saulve cli can now be used to solve challenges.
 The module containing the `App` instance created above must be given as an `--app` argument (or in a
-`AOC_CHALLENGES` environment variable).
+`SAULVE_CHALLENGES` environment variable).
 
 ```bash-session
-$ aoc --app challenges my-aoc-challenge solve 2022 01
+$ saulve --app challenges aoc solve 2022 01
 Calorie Counting:
   121
   1932

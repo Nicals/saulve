@@ -1,10 +1,10 @@
 """
-AOC related errors.
+Saulve related errors.
 """
 
 
-class AOCError(Exception):
-    """Base class for aoc related errors."""
+class SaulveError(Exception):
+    """Base class for saulve related errors."""
 
 
 class ValidationError(Exception):
@@ -15,13 +15,13 @@ class PuzzleHasNoSolution(Exception):
     """Raised when a puzzle don't have any registered solution."""
 
 
-class ChallengeNotFound(AOCError):
+class ChallengeNotFound(SaulveError):
     """Raised when a challenge does not exist."""
 
 
-class PuzzleNotFound(AOCError):
+class PuzzleNotFound(SaulveError):
     """Raised when a puzzle does not exist."""
 
 
-class PuzzleModuleError(AOCError):
+class PuzzleModuleError(SaulveError):
     """Raised when we fail to load a puzzle module."""
