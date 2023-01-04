@@ -1,73 +1,54 @@
-from pathlib import Path
-
 import click
 
-from .calendar import Calendar
-from .errors import PuzzleInputMissing, PuzzleNotFound, SolutionModuleError
+from .app import import_app
+from .errors import PuzzleNotFound, ValidationError
 
 
 @click.group()
 @click.option(
-    '-p', '--puzzles',
-    'puzzle_path',
+    '-a', '--app',
+    'app_module',
     required=True,
-    type=click.Path(
-        exists=True,
-        file_okay=False,
-        resolve_path=True,
-        path_type=Path,
-    ),
-    envvar='AOC_PUZZLES',
-    help='Path to the puzzle directory.',
+    envvar='AOC_CHALLENGES',
+    help='Application module.',
 )
+@click.argument('chall')
 @click.pass_context
-def cli(ctx, puzzle_path: Path):
+def cli(ctx: click.Context, app_module: str, chall: str) -> None:
     ctx.ensure_object(dict)
 
-    try:
-        ctx.obj['CALENDAR'] = Calendar(puzzle_path)
-    except SolutionModuleError as e:
-        raise click.ClickException(str(e))
+    app = import_app(app_module)
+    challenge = app.get_challenge(chall)
+
+    ctx.obj['CHALLENGE'] = challenge
 
 
-@cli.command(help='List all known puzzles')
-@click.option('-y', '--year', help='Show only puzzle of this year.')
+@cli.command(name='list', help='List all puzzles.')
+@click.argument('filters', nargs=-1)
 @click.pass_context
-def list(ctx, year: int | None) -> None:
-    calendar = ctx.obj['CALENDAR']
-
-    puzzles = calendar.list_puzzles(year=year)
-
-    if puzzles:
-        for puzzle in puzzles:
-            click.echo(f'{puzzle.year}: {puzzle.day}')
-    else:
-        click.echo('No puzzle found')
+def list_puzzles(ctx: click.Context, filters: list[str]) -> None:
+    """List all puzzles in the selected challenge."""
+    click.echo(ctx.obj['CHALLENGE'])
+    click.echo(filters)
 
 
-@cli.command(help='Run a single puzzle.')
-@click.argument('year', type=click.INT)
-@click.argument('day', type=click.INT)
+@cli.command(help='Solve a given puzzle.')
+@click.argument('puzzle_id', nargs=-1, required=True)
 @click.pass_context
-def run(ctx, year: int, day: int) -> None:
-    calendar = ctx.obj['CALENDAR']
+def solve(ctx: click.Context, puzzle_id: list[str]) -> None:
+    """Solve a puzzle in the selected challenge."""
+    challenge = ctx.obj['CHALLENGE']
 
     try:
-        puzzle = calendar.get_puzzle(year, day)
+        puzzle = challenge.get(*puzzle_id)
+    except ValidationError as e:
+        raise click.ClickException(f'Invalid puzzle id. {e}')
     except PuzzleNotFound:
-        raise click.ClickException('Puzzle does not exist.')
+        raise click.ClickException('Puzzle not found.')
 
-    try:
-        result = puzzle.run()
-    except PuzzleInputMissing:
-        raise click.ClickException('Puzzle input is missing.')
+    solutions = puzzle.solve()
 
-    if result.first_star.is_solved:
-        click.echo(f'First star: {result.first_star.solution}')
-    else:
-        click.echo('First star: Not solved')
-
-    if result.second_star.is_solved:
-        click.echo(f'Second star: {result.second_star.solution}')
-    else:
-        click.echo('Second star: Not solved')
+    click.echo(f'{puzzle.name}:')
+    for solution in solutions:
+        click.echo('  ', nl=False)
+        click.echo(solution.solution if solution.is_solved else 'unsolved')

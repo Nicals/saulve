@@ -1,62 +1,15 @@
-"""Holds puzzle solving.
+"""Declare puzzle and their associated solution.
 """
 
-from pathlib import Path
-from typing import Any, Callable, Generic, IO, NamedTuple, TypeVar
+from typing import Callable, Generic, NamedTuple, TypeVar
 
-from .errors import PuzzleInputMissing
-
-
-__all__ = ['Puzzle', 'Solution']
+from .errors import PuzzleHasNoSolution
 
 
-T = TypeVar('T')
+__all__ = ['Puzzle']
 
 
-class Solution(Generic[T]):
-    """This class should be implemented when solving challenges.
-
-    Type:
-        T: Type of the puzzle input once parsed by `parse_input_file`.
-    """
-    def parse_input_file(self, file: IO[str]) -> T:
-        """
-        Parsed puzzle input file.
-
-        Returns:
-            T: Input data that will be passed as argument to `first_star` and
-                `second_star`.
-        """
-        raise NotImplementedError("'parse_input_file' must be implemented.")
-
-    def first_star(self, puzzle: T) -> int | str | None:
-        """
-        Implement this to solve the first stage of this challenge.
-
-        Arguments:
-            puzzle (T): Puzzle input as returned by `parse_input_file`.
-
-        Returns:
-            int | str: Actual solution to the puzzle.
-            None: if the puzzle is not solved.
-        """
-
-    def second_star(self, puzzle: T) -> int | str | None:
-        """
-        Implement this to solve the first stage of this challenge.
-
-        See:
-            first_star: for arguments and return value meaning.
-        """
-
-
-# Types one of the Solution.{first_star,second_star} method;
-# I'm not really sure how to type this... The Any should be the T type # of
-# the Solution class
-SolutionMethod = Callable[[Any], int | str | None]
-
-
-class StarResult(NamedTuple):
+class PuzzleSolution(NamedTuple):
     """
     The result of one stage of a puzzle.
     """
@@ -67,52 +20,79 @@ class StarResult(NamedTuple):
         return self.solution is not None
 
 
-class PuzzleResult(NamedTuple):
+PuzzleInput = TypeVar('PuzzleInput')
+
+PuzzleStepResult = int | str | None
+
+SolutionFunction = Callable[[PuzzleInput], PuzzleStepResult]
+
+
+class Puzzle(Generic[PuzzleInput]):
+    """Holds solutions of a puzzle and its input data.
+
+    A puzzle is first defined by its name and input.
+    Next, some solution functions steps are registered by decorating them with
+    the `solution` decorator.
+
+    Arguments:
+        name: A verbose name for this puzzle
+        puzzle_input: The input data of the puzzle.
+
+    Attributes:
+        name: A verbose title for the current puzzle
+        puzzle_input: Input problem to solve
+        steps: A list of callable implementing puzzle solutions
     """
-    The whole result of a puzzle
-    """
-    first_star: StarResult
-    second_star: StarResult
+    def __init__(self, name: str, puzzle_input: PuzzleInput) -> None:
+        self.name = name
+        self.puzzle_input = puzzle_input
+        self.steps: list[SolutionFunction] = []
 
-    @property
-    def is_solved(self):
-        return self.first_star.is_solved and self.second_star.is_solved
+    def __repr__(self) -> str:
+        return f'<{self.__class__.__name__}: {self.name}>'
 
+    def __str__(self) -> str:
+        return self.name
 
-class Puzzle:
-    def __init__(
+    def solution(
         self,
-        year: int,
-        day: int,
-        solution: Solution,
-        input_path: Path | None,
-    ) -> None:
-        self.year, self.day = year, day
-        self.solution = solution
-        self.input_path = input_path
+        fn: SolutionFunction,
+    ) -> SolutionFunction:
+        """Register a solution function for the puzzle.
 
-    def _run_star(
-        self,
-        star_func: SolutionMethod,
-        puzzle_input: str,
-    ) -> StarResult:
-        result = star_func(puzzle_input)
+        The function takes the puzzle input as argument and should return a
+        solution.
 
-        return StarResult(solution=str(result) if result is not None else None)
-
-    def run(self) -> PuzzleResult:
+        Example:
+            >>> puzzle = Puzzle(title="double", puzzle_input=12)
+            >>> @puzzle.solution
+            ... def double_input(number):
+            ...     return number * 2
         """
-        Raise:
-            PuzzleInputMissing: If no input are provided to run the puzzle
-                against.
+        self.steps.append(fn)
+        return fn
+
+    def solve(self) -> list[PuzzleSolution]:
+        """Run all registered solutions for this puzzle and return a list of
+        solution values.
+
+        Raises:
+            PuzzleHasNoSolution: If no solution have been registered for this
+                puzzle.
         """
-        if self.input_path is None:
-            raise PuzzleInputMissing()
+        if not self.steps:
+            raise PuzzleHasNoSolution(
+                f"{self} don't have registered solutions"
+            )
 
-        with self.input_path.open() as f:
-            puzzle_input = self.solution.parse_input_file(f)
+        solutions: list[PuzzleSolution] = []
 
-        first_star = self._run_star(self.solution.first_star, puzzle_input)
-        second_star = self._run_star(self.solution.second_star, puzzle_input)
+        for solve_step in self.steps:
+            solution = solve_step(self.puzzle_input)
 
-        return PuzzleResult(first_star, second_star)
+            solutions.append(PuzzleSolution(
+                str(solution) if solution is not None
+                else None
+            ))
+
+        return solutions

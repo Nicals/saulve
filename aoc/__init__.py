@@ -1,4 +1,5 @@
-from .puzzle import Solution
+from .app import App
+from .puzzle import Puzzle
 
 
-__all__ = ['Calendar', 'Solution']
+__all__ = ['App', 'Puzzle']

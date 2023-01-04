@@ -1,65 +1,58 @@
 Advent Of Code
 ==============
 
-A framework for the [Advent of Code](https://adventofcode.com) challenge.
+A framework for computer programming challenge.
 
+For the moment, only [Advent of Code](https://adventofcode.com) is supported.
 
 Usage
-=====
+-----
 
-You first need a puzzle repository.
-Each puzzle solution is a `day_<int>.py` file in a `year_<int>` directory.
-The location of the `year` folder must be a valid python package.
-Puzzle input needs te be alongside the puzzle solution and named with a
-`.input` extension.
+A few terms need to be defined first.
+A **challenge** is a source of programming puzzle (such as [Advent of code](https://adventofcode.com/).
+A puzzle is a given problem within a challenge (such as [multiple of 3 or 5](https://projecteuler.net/problem=1) 
+in [Project Euler](https://projecteuler.net/).
 
-For example:
-
-```
-/advent_of_code/
-  __init__.py
-  2022/
-    __init__.py
-    day_01.py
-    day_01.input
-```
-
-A puzzle solution is a class extending `aoc.Soluton`.
-The following method can be overriden:
-
-  + `parse_input_file`: Receive le puzzle input file and prepare it for solving.
-  + `first_star`: Receive the output of `parse_input_file` and returns the puzzle solution.
-  + `second_star`: Same as above, but for second stage of the puzzle.
+For advent of code, each puzzle must be in a module named after the puzzle day (ex: `day_06.py`).
+A module puzzle must have a `puzzle` attribute and some registered solution steps.
 
 
 ```python
-from typing import IO
-from aoc import Solution
+# file: my_challenges/advent_of_code/year_2022/day_01.py
+from aoc import Puzzle
 
-PuzzleInput = list[int]
+puzzle = Puzzle(name='Calorie Counting', puzzle_input='...')
 
-class MySolution(Solution[PuzzleInput]):
-  def parse_input_file(self, file: IO[str]) -> PuzzleInput:
-    return [int(e) for e in file.read()]
+@puzzle.solution
+def solve_first_star(puzzle_input):
+  ...
 
-  def first_star(self, puzzle: PuzzleInput) -> int:
-    return puzzle[0]
+@puzzle.solution
+def solve_second_star(puzzle_input):
+  ...
 ```
 
-The `aoc` cli tool can then be used to list and run puzzle solutions.
-The puzzle directory must be given either with a `--puzzle` arguments or by
-setting an `AOC_PUZZLES` environment varialbe.
+To make AOC aware of the advent of code puzzle, an application instance must be created and the
+advent of code challenge registered into it.
 
-```bash-session
-$ aoc --puzzle /path/to/puzzle list
+```python
+# file my_challenge/__init__.py
+from aoc import App
+from aoc.challenges.advent_of_code import AdventOfCodeLoader
+from . import advent_of_code
 
-# or
+app = App()
 
-$ AOC_PUZZLES=/path/to/puzzle aoc list
+app.register_challenge('my-aoc-challenge', AdventOfCodeLoader(advent_of_code))
 ```
 
-The `run` command will execute a given solution and output its result.
+The aoc cli can now be used to solve challenges.
+The module containing the `App` instance created above must be given as an `--app` argument (or in a
+`AOC_CHALLENGES` environment variable).
 
 ```bash-session
-$ aoc --puzzle run 2022 1
+$ aoc --app challenges my-aoc-challenge solve 2022 01
+Calorie Counting:
+  121
+  1932
 ```
