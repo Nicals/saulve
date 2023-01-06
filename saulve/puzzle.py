@@ -16,7 +16,7 @@ class PuzzleSolution(NamedTuple):
     solution: str | None
 
     @property
-    def is_solved(self):
+    def is_solved(self) -> bool:
         return self.solution is not None
 
 
