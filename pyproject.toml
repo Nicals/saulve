@@ -22,13 +22,16 @@ saulve = "saulve.cli:cli"
 dev = [
   "mypy ~= 0.991",
   "pytest ~= 7.2",
+  "pytest-cov ~= 4.0",
 ]
 
 [project.urls]
 Homepage = "https://github.com/Nicals/saulve"
 
+
 [tool.setuptools]
 packages = ["saulve"]
+
 
 [tool.mypy]
 packages = ["saulve"]
@@ -42,3 +45,14 @@ disallow_any_unimported = true
 no_implicit_optional = true
 
 warn_unused_ignores = true
+
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+
+[tool.coverage.run]
+source = ["saulve"]
+
+[tool.coverage.report]
+skip_empty = true
