@@ -14,7 +14,14 @@ jobs:
           python-version: '3.11'
       - name: Install dependencies
         run: pip install -e .[dev]
+
       - name: Run test
-        run: pytest
+        run: pytest --cov --cov-report lcov
       - name: Check typing
         run: mypy
+
+      - name: Upload coverage report
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: ./coverage.lcov
