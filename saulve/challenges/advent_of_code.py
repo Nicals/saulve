@@ -1,7 +1,6 @@
 """Advent of code challenge implementation
 """
 
-from importlib import import_module
 from pathlib import Path
 import re
 import types
@@ -9,7 +8,8 @@ from typing import NamedTuple
 
 from .base import Challenge, ChallengeLoader
 from saulve import Puzzle
-from saulve.errors import PuzzleModuleError, PuzzleNotFound, ValidationError
+from saulve.errors import PuzzleNotFound, ValidationError
+from saulve.import_module import import_instance
 
 
 YEAR_REGEX = re.compile(r'^year_(?P<year>\d{4})$')
@@ -57,23 +57,6 @@ class AdventOfCodeLoader(ChallengeLoader):
     def __init__(self, challenge_module: types.ModuleType) -> None:
         self.challenge_module = challenge_module
 
-    def _load_puzzle(self, module_name: str) -> Puzzle:
-        puzzle_module = import_module(module_name)
-
-        if not hasattr(puzzle_module, 'puzzle'):
-            raise PuzzleModuleError(
-                f"No 'puzzle' attribute in {puzzle_module.__name__}"
-            )
-
-        puzzle = puzzle_module.puzzle
-
-        if not isinstance(puzzle, Puzzle):
-            raise PuzzleModuleError(
-                f"{module_name}.puzzle is not an instance of Puzzle"
-            )
-
-        return puzzle
-
     def load(self) -> Challenge:
         puzzles: list[AdventOfCodePuzzle] = []
 
@@ -103,7 +86,7 @@ class AdventOfCodeLoader(ChallengeLoader):
                     year_dir.name,
                     day_file.with_suffix('').name,
                 ])
-                puzzle = self._load_puzzle(puzzle_module)
+                puzzle = import_instance(puzzle_module, 'puzzle', Puzzle)
 
                 puzzles.append(AdventOfCodePuzzle(year, day, puzzle))
 

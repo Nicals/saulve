@@ -4,12 +4,12 @@ The challenges is a python package. Each module of this package containing a
 'puzzle' attribute is loaded.
 """
 
-from importlib import import_module
 from pathlib import Path
 import types
 
-from saulve.errors import PuzzleModuleError, PuzzleNotFound, ValidationError
+from saulve.errors import MissingAttribute, PuzzleNotFound, ValidationError
 from saulve.puzzle import Puzzle
+from saulve.import_module import import_instance
 from .base import Challenge as BaseChallenge, ChallengeLoader
 
 
@@ -54,18 +54,10 @@ class GenericLoader(ChallengeLoader):
                 filename.with_suffix('').name,
             ])
 
-            puzzle_module = import_module(puzzle_module_name)
-            if not hasattr(puzzle_module, 'puzzle'):
+            try:
+                puzzle = import_instance(puzzle_module_name, 'puzzle', Puzzle)
+            except MissingAttribute:
                 continue
-
-            puzzle = puzzle_module.puzzle
-
-            if not isinstance(puzzle, Puzzle):
-                raise PuzzleModuleError(
-                    f"{puzzle_module_name}.puzzle is not an instance of "
-                    "Puzzle."
-                )
-
             puzzles[filename.with_suffix('').name] = puzzle
 
         return Challenge(puzzles)
