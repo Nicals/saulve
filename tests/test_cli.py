@@ -13,6 +13,15 @@ app = App()
 app.register_challenge('test-challenge', InMemoryLoader([puzzle]))
 
 
+def test_list_challenges_if_no_challenge_given() -> None:
+    runner = CliRunner()
+
+    result = runner.invoke(cli, ['--app', __name__])
+
+    assert result.exit_code == 0
+    assert 'test-challenge' in result.output
+
+
 def test_list_puzzles() -> None:
     runner = CliRunner()
 

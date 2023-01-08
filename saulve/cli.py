@@ -1,10 +1,18 @@
+from typing import Optional
+
 import click
 
-from .app import import_app
+from .app import App, import_app
 from .errors import PuzzleNotFound, ValidationError
 
 
-@click.group()
+def display_challenges(app: App) -> None:
+    click.echo('Available challenges:')
+    for challenge_name in app.loaders:
+        click.echo(f'  {challenge_name}')
+
+
+@click.group(invoke_without_command=True)
 @click.option(
     '-a', '--app',
     'app_module',
@@ -12,14 +20,17 @@ from .errors import PuzzleNotFound, ValidationError
     envvar='SAULVE_CHALLENGES',
     help='Application module.',
 )
-@click.argument('chall')
+@click.argument('chall', required=False)
 @click.pass_context
-def cli(ctx: click.Context, app_module: str, chall: str) -> None:
+def cli(ctx: click.Context, app_module: str, chall: Optional[str]) -> None:
     ctx.ensure_object(dict)
-
     app = import_app(app_module)
-    challenge = app.get_challenge(chall)
 
+    if chall is None:
+        display_challenges(app)
+        return
+
+    challenge = app.get_challenge(chall)
     ctx.obj['CHALLENGE'] = challenge
 
 
