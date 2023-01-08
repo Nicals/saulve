@@ -75,7 +75,16 @@ You need to tell *Saulve* where your `app` attribute is using the `--app` argume
 `SAULVE_CHALLENGES` env variable).
 Each puzzle is identified by its module name.
 
+You can list all puzzle registered under a challenge:
+
+```bash-session
+$ saulve --app challenges euler list
 ```
+
+
+To run the solutions functions of a given puzzle:
+
+```bash-session
 $ saulve --app challenges euler solve problem_001
 Multiple of 3 or 5:
   233168

@@ -28,8 +28,10 @@ def cli(ctx: click.Context, app_module: str, chall: str) -> None:
 @click.pass_context
 def list_puzzles(ctx: click.Context, filters: list[str]) -> None:
     """List all puzzles in the selected challenge."""
-    click.echo(ctx.obj['CHALLENGE'])
-    click.echo(filters)
+    challenge = ctx.obj['CHALLENGE']
+
+    for puzzle in challenge.find():
+        click.echo(puzzle.name)
 
 
 @cli.command(help='Solve a given puzzle.')
