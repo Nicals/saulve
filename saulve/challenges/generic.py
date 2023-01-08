@@ -17,6 +17,9 @@ class Challenge(BaseChallenge):
     def __init__(self, puzzles: dict[str, Puzzle]) -> None:
         self.puzzles = puzzles
 
+    def find(self) -> list[Puzzle]:
+        return list(self.puzzles.values())
+
     def get(self, *args: str) -> Puzzle:
         if len(args) != 1:
             raise ValidationError(f'1 id argument expected, got {len(args)}.')

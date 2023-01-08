@@ -31,6 +31,14 @@ class TestChallenge:
 
         assert retrieved_puzzle is puzzle
 
+    def test_finds_challenges(self) -> None:
+        puzzle = Mock(Puzzle)
+        chall = Challenge(puzzles={'foo': puzzle})
+
+        found_puzzles = chall.find()
+
+        assert found_puzzles == [puzzle]
+
 
 class TestGenericLoader:
     def test_loads_challenges(self) -> None:

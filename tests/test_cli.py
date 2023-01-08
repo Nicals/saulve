@@ -1,0 +1,22 @@
+from click.testing import CliRunner
+
+from saulve import App, Puzzle
+from saulve.challenges.in_memory import InMemoryLoader
+from saulve.cli import cli
+
+
+puzzle = Puzzle(name='Test puzzle', puzzle_input='foo')
+puzzle.solution(lambda a: 'bar')
+
+
+app = App()
+app.register_challenge('test-challenge', InMemoryLoader([puzzle]))
+
+
+def test_list_puzzles() -> None:
+    runner = CliRunner()
+
+    result = runner.invoke(cli, ['--app', __name__, 'test-challenge', 'list'])
+
+    assert result.exit_code == 0
+    assert 'Test puzzle' in result.output

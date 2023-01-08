@@ -29,6 +29,9 @@ class Calendar(Challenge):
     def __init__(self, puzzles: list[AdventOfCodePuzzle]) -> None:
         self.puzzles = puzzles
 
+    def find(self) -> list[Puzzle]:
+        return [p.puzzle for p in self.puzzles]
+
     def get(self, *args: str) -> Puzzle:
         if len(args) != 2:
             raise ValidationError('YEAR and DAY expected.')
