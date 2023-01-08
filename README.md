@@ -1,5 +1,5 @@
 [![test](https://github.com/Nicals/saulve/actions/workflows/test.yml/badge.svg?branch=master)](https://github.com/Nicals/saulve/actions?query=workflow:test+event:push+branch:master)
-[![coverage](https://coveralls.io/repos/github/Nicals/saulve/badge.svg?branch=master)](https://coveralls.io/github/Nicals/saulve)
+[![Coverage Status](https://coveralls.io/repos/github/Nicals/saulve/badge.svg?branch=master&kill_cache=1)](https://coveralls.io/github/Nicals/saulve?branch=master)
 
 Saulve
 ======
