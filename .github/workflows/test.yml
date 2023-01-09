@@ -25,3 +25,5 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path-to-lcov: ./coverage.lcov
+      - name: Purge coverage badge cache
+        run: curl -X PURGE https://camo.githubusercontent.com/78a97fb511c5bbb2ef64b7489d5668d6fc419d3a84648c943e6fd50ddb508990/68747470733a2f2f636f766572616c6c732e696f2f7265706f732f6769746875622f4e6963616c732f7361756c76652f62616467652e7376673f6272616e63683d6d6173746572266b696c6c5f63616368653d31
