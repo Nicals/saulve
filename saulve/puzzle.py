@@ -43,7 +43,7 @@ class Puzzle(Generic[PuzzleInput]):
         puzzle_input: Input problem to solve
         steps: A list of callable implementing puzzle solutions
     """
-    def __init__(self, name: str, puzzle_input: PuzzleInput) -> None:
+    def __init__(self, name: str, puzzle_input: PuzzleInput|None = None) -> None:
         self.name = name
         self.puzzle_input = puzzle_input
         self.steps: list[SolutionFunction] = []
