@@ -1,5 +1,7 @@
+import sys
+
 from .challenges.base import Challenge, ChallengeLoader
-from .import_module import import_instance
+from .import_module import append_module_path, import_instance
 from .errors import SaulveError, ChallengeNotFound
 
 
@@ -48,4 +50,5 @@ def import_app(app_module_name: str) -> App:
         SaulveError: If the module has no 'app' attribute or the 'app'
             attribute is not an instance of the App class.
     """
+    append_module_path(app_module_name, sys.path)
     return import_instance(app_module_name, 'app', App)
