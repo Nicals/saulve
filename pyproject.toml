@@ -30,7 +30,7 @@ Homepage = "https://github.com/Nicals/saulve"
 
 
 [tool.setuptools]
-packages = ["saulve"]
+packages = ["saulve", "saulve.challenges"]
 
 
 [tool.mypy]
