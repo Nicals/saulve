@@ -1,3 +1,4 @@
+import logging
 from unittest.mock import Mock
 
 import pytest
@@ -51,3 +52,25 @@ class TestGenericLoader:
 
         assert 'contains_puzzle' in chall.puzzles
         assert chall.puzzles['contains_puzzle'].name == 'A puzzle'
+
+    def test_extract_puzzle_id_from_regexp(self) -> None:
+        loader = GenericLoader(generic_fixtures, id_regexp=r'(contains)')
+
+        chall = loader.load()
+
+        assert 'contains' in chall.puzzles
+        assert chall.puzzles['contains'].name == 'A puzzle'
+
+        assert 'other_puzzle' in chall.puzzles
+        assert chall.puzzles['other_puzzle'].name == 'Other puzzle'
+
+    def test_warn_about_duplicated_puzzle_id(self, caplog) -> None:
+        loader = GenericLoader(generic_fixtures, id_regexp=r'(puzzle)')
+
+        with caplog.at_level(logging.WARNING, logger='saulve.challenge.generic'):
+            loader.load()
+
+        assert (
+            "Duplicated puzzle id 'puzzle' in tests.challenges.fixtures.generic.contains_puzzle"
+            in caplog.text
+        )
