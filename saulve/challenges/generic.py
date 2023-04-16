@@ -10,15 +10,18 @@ import types
 from saulve.errors import MissingAttribute, PuzzleNotFound, ValidationError
 from saulve.puzzle import Puzzle
 from saulve.import_module import import_instance
-from .base import Challenge as BaseChallenge, ChallengeLoader
+from .base import Challenge as BaseChallenge, ChallengeLoader, PuzzleView
 
 
 class Challenge(BaseChallenge):
     def __init__(self, puzzles: dict[str, Puzzle]) -> None:
         self.puzzles = puzzles
 
-    def find(self) -> list[Puzzle]:
-        return list(self.puzzles.values())
+    def find(self) -> list[PuzzleView]:
+        return [
+            PuzzleView(id=key, name=puzzle.name)
+            for key, puzzle in self.puzzles.items()
+        ]
 
     def get(self, *args: str) -> Puzzle:
         if len(args) != 1:

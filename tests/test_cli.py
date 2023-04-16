@@ -28,4 +28,4 @@ def test_list_puzzles() -> None:
     result = runner.invoke(cli, ['--app', __name__, 'test-challenge', 'list'])
 
     assert result.exit_code == 0
-    assert 'Test puzzle' in result.output
+    assert '0 - Test puzzle' in result.output

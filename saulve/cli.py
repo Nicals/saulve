@@ -42,7 +42,7 @@ def list_puzzles(ctx: click.Context, filters: list[str]) -> None:
     challenge = ctx.obj['CHALLENGE']
 
     for puzzle in challenge.find():
-        click.echo(puzzle.name)
+        click.echo(f'{puzzle.id} - {puzzle.name}')
 
 
 @cli.command(help='Solve a given puzzle.')

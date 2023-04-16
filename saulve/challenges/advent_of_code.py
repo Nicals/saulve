@@ -6,7 +6,7 @@ import re
 import types
 from typing import NamedTuple
 
-from .base import Challenge, ChallengeLoader
+from .base import Challenge, ChallengeLoader, PuzzleView
 from saulve import Puzzle
 from saulve.errors import PuzzleNotFound, ValidationError
 from saulve.import_module import import_instance
@@ -29,8 +29,11 @@ class Calendar(Challenge):
     def __init__(self, puzzles: list[AdventOfCodePuzzle]) -> None:
         self.puzzles = puzzles
 
-    def find(self) -> list[Puzzle]:
-        return [p.puzzle for p in self.puzzles]
+    def find(self) -> list[PuzzleView]:
+        return [
+            PuzzleView(id=f'{puzzle.year} {puzzle.day:02}', name=puzzle.puzzle.name)
+            for puzzle in self.puzzles
+        ]
 
     def get(self, *args: str) -> Puzzle:
         if len(args) != 2:
