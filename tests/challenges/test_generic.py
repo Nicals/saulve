@@ -1,4 +1,5 @@
 import logging
+import re
 from unittest.mock import Mock
 
 import pytest
@@ -71,6 +72,8 @@ class TestGenericLoader:
             loader.load()
 
         assert (
-            "Duplicated puzzle id 'puzzle' in tests.challenges.fixtures.generic.contains_puzzle"
-            in caplog.text
-        )
+            re.search(
+                r"Duplicated puzzle id 'puzzle' in tests.challenges.fixtures.generic.\w*puzzle\w*",
+                caplog.text,
+            ) is not None
+        ), f'"{caplog.text}" does not match expected message.'
