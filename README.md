@@ -12,13 +12,13 @@ Usage
 -----
 
 A few terms need to be defined first.
-A **challenge** is a source of programming puzzle (such as [Advent of code](https://adventofcode.com/).
+A **challenge** is a source of programming puzzles (such as [Advent of code](https://adventofcode.com/).
 A puzzle is a given problem within a challenge (such as [multiple of 3 or 5](https://projecteuler.net/problem=1) 
 in [Project Euler](https://projecteuler.net/).
 
 The following example will setup an environment to solve [Project Euler](https://projecteuler.net/)
 puzzles.
-Start by with a python project to store your challenges and create a `euler` package in it.
+Start with a python project to store your challenges and create an `euler` package in it.
 The name of the `euler` can be anything you want.
 
 ```
@@ -38,8 +38,8 @@ from saulve import Puzzle
 puzzle = Puzzle(name="Multiple of 3 or 5", puzzle_input=1000)
 ```
 
-Solution to puzzle are registered by decorating function with `Puzzle.solution`.
-Solution function takes one argument that is the `puzzle_input` value passed to the Puzzle
+Solutions to puzzles are registered by decorating functions with `Puzzle.solution`.
+Solution functions takes one argument that is the `puzzle_input` value passed to the Puzzle
 constructor.
 
 ```python
@@ -75,7 +75,7 @@ You need to tell *Saulve* where your `app` attribute is using the `--app` argume
 `SAULVE_CHALLENGES` env variable).
 Each puzzle is identified by its module name.
 
-You can list all puzzle registered under a challenge:
+You can list all puzzles registered under a challenge:
 
 ```bash-session
 $ saulve --app challenges euler list
