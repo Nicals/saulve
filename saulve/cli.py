@@ -55,9 +55,9 @@ def solve(ctx: click.Context, puzzle_id: list[str]) -> None:
     try:
         puzzle = challenge.get(*puzzle_id)
     except ValidationError as e:
-        raise click.ClickException(f'Invalid puzzle id. {e}')
-    except PuzzleNotFound:
-        raise click.ClickException('Puzzle not found.')
+        raise click.ClickException(f'Invalid puzzle id. {e}') from e
+    except PuzzleNotFound as e:
+        raise click.ClickException('Puzzle not found.') from e
 
     solutions = puzzle.solve()
 

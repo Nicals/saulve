@@ -19,6 +19,8 @@ jobs:
         run: pytest --cov --cov-report lcov
       - name: Check typing
         run: mypy
+      - name: Check style
+        run: ruff check --output-format=github .
 
       - name: Upload coverage report
         uses: coverallsapp/github-action@master

@@ -4,6 +4,7 @@ This module should be useful for testing purpose.
 """
 
 from saulve.puzzle import Puzzle
+
 from .base import Challenge, ChallengeLoader
 from .generic import Challenge as GenericChallenge
 

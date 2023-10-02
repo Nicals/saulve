@@ -1,7 +1,7 @@
 from unittest.mock import Mock
 
-from saulve.puzzle import Puzzle
 from saulve.challenges.advent_of_code import AdventOfCodePuzzle, Calendar
+from saulve.puzzle import Puzzle
 
 
 class TestCalendar:

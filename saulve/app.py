@@ -1,16 +1,15 @@
 import sys
 
 from .challenges.base import Challenge, ChallengeLoader
+from .errors import ChallengeNotFound, SaulveError
 from .import_module import append_module_path, import_instance
-from .errors import SaulveError, ChallengeNotFound
-
 
 __all__ = ['App', 'import_app']
 
 
 class App:
     def __init__(self) -> None:
-        self.loaders: dict[str, ChallengeLoader] = dict()
+        self.loaders: dict[str, ChallengeLoader] = {}
 
     def register_challenge(
         self,
@@ -36,10 +35,10 @@ class App:
         """
         try:
             challenge = self.loaders[challenge_id]
-        except KeyError:
+        except KeyError as e:
             raise ChallengeNotFound(
                 f"No challenge exists with id {challenge_id}"
-            )
+            ) from e
 
         return challenge.load()
 

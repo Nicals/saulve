@@ -1,13 +1,12 @@
 """Utility functions for dynamic imports
 """
 
-from importlib import import_module
 import importlib.util
+from importlib import import_module
 from pathlib import Path
 from typing import Type, TypeVar
 
 from saulve.errors import MissingAttribute, WrongAttributeType
-
 
 T = TypeVar('T')
 
@@ -29,14 +28,13 @@ def import_instance(module_name: str, attr: str, cls: Type[T]) -> T:
 
     try:
         instance = getattr(module, attr)
-    except AttributeError:
-        raise MissingAttribute(module_name, attr)
+    except AttributeError as e:
+        raise MissingAttribute(module_name, attr) from e
 
     if not isinstance(instance, cls):
         raise WrongAttributeType(f'{module_name}.{attr}', cls)
 
     return instance
-
 
 
 def append_module_path(module_name: str, sys_path: list[str]) -> None:

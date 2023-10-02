@@ -68,12 +68,16 @@ class TestGenericLoader:
     def test_warn_about_duplicated_puzzle_id(self, caplog) -> None:
         loader = GenericLoader(generic_fixtures, id_regexp=r'(puzzle)')
 
-        with caplog.at_level(logging.WARNING, logger='saulve.challenge.generic'):
+        with caplog.at_level(
+            logging.WARNING,
+            logger='saulve.challenge.generic'
+        ):
             loader.load()
 
         assert (
             re.search(
-                r"Duplicated puzzle id 'puzzle' in tests.challenges.fixtures.generic.\w*puzzle\w*",
+                r"Duplicated puzzle id 'puzzle' in "
+                r"tests.challenges.fixtures.generic.\w*puzzle\w*",
                 caplog.text,
             ) is not None
         ), f'"{caplog.text}" does not match expected message.'

@@ -1,16 +1,16 @@
 """Advent of code challenge implementation
 """
 
-from pathlib import Path
 import re
 import types
+from pathlib import Path
 from typing import NamedTuple
 
-from .base import Challenge, ChallengeLoader, PuzzleView
 from saulve import Puzzle
 from saulve.errors import PuzzleNotFound, ValidationError
 from saulve.import_module import import_instance
 
+from .base import Challenge, ChallengeLoader, PuzzleView
 
 YEAR_REGEX = re.compile(r'^year_(?P<year>\d{4})$')
 PUZZLE_REGEX = re.compile(r'^day_(?P<day>\d{1,2})\.py$')
@@ -31,7 +31,10 @@ class Calendar(Challenge):
 
     def find(self) -> list[PuzzleView]:
         return [
-            PuzzleView(id=f'{puzzle.year} {puzzle.day:02}', name=puzzle.puzzle.name)
+            PuzzleView(
+                id=f'{puzzle.year} {puzzle.day:02}',
+                name=puzzle.puzzle.name,
+            )
             for puzzle in self.puzzles
         ]
 
@@ -41,13 +44,13 @@ class Calendar(Challenge):
 
         try:
             year = int(args[0])
-        except ValueError:
-            raise ValidationError(f"'{args[0]} is not a valid year.")
+        except ValueError as e:
+            raise ValidationError(f"'{args[0]} is not a valid year.") from e
 
         try:
             day = int(args[1])
-        except ValueError:
-            raise ValidationError(f"'{args[1]} is not a valid day.")
+        except ValueError as e:
+            raise ValidationError(f"'{args[1]} is not a valid day.") from e
 
         for puzzle in self.puzzles:
             if puzzle.year == year and puzzle.day == day:

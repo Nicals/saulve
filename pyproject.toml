@@ -23,6 +23,7 @@ dev = [
   "mypy ~= 1.4",
   "pytest ~= 7.2",
   "pytest-cov ~= 4.0",
+  "ruff",
 ]
 
 [project.urls]
@@ -56,3 +57,13 @@ source = ["saulve"]
 
 [tool.coverage.report]
 skip_empty = true
+
+[tool.ruff]
+select = [
+  "E",  # pycodestyle errors
+  "W",  # pycodestyle warnings
+  "F",  # pyflakes
+  "B",  # flake8-bugbear
+  "C",  # flake8-comprehension
+  "I",  # isort
+]

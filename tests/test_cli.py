@@ -4,7 +4,6 @@ from saulve import App, Puzzle
 from saulve.challenges.in_memory import InMemoryLoader
 from saulve.cli import cli
 
-
 puzzle = Puzzle(name='Test puzzle', puzzle_input='foo')
 puzzle.solution(lambda a: 'bar')
 

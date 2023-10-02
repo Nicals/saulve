@@ -1,6 +1,5 @@
 from typing import NamedTuple, Protocol
 
-from ..errors import PuzzleNotFound, ValidationError
 from ..puzzle import Puzzle
 
 
@@ -13,6 +12,7 @@ class PuzzleView(NamedTuple):
 class Challenge(Protocol):
     """A collection of puzzle from a common source.
     """
+
     def find(self) -> list[PuzzleView]:
         """Get all known puzzles"""
 
