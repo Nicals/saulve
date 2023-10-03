@@ -1,7 +1,7 @@
 """Declare puzzle and their associated solution.
 """
 
-from typing import Callable, Generic, NamedTuple, TypeVar
+from typing import Callable, Concatenate, NamedTuple, ParamSpec, TypeVar
 
 from .errors import PuzzleHasNoSolution
 
@@ -19,14 +19,15 @@ class PuzzleSolution(NamedTuple):
         return self.solution is not None
 
 
-PuzzleInput = TypeVar('PuzzleInput')
-
 PuzzleStepResult = int | str | None
 
-SolutionFunction = Callable[[PuzzleInput], PuzzleStepResult]
+T = TypeVar('T')
+U = TypeVar('U')
+
+P = ParamSpec('P')
 
 
-class Puzzle(Generic[PuzzleInput]):
+class Puzzle:
     """Holds solutions of a puzzle and its input data.
 
     A puzzle is first defined by its name and input.
@@ -35,22 +36,15 @@ class Puzzle(Generic[PuzzleInput]):
 
     Arguments:
         name: A verbose name for this puzzle
-        puzzle_input: The input data of the puzzle.
 
     Attributes:
         name: A verbose title for the current puzzle
-        puzzle_input: Input problem to solve
         steps: A list of callable implementing puzzle solutions
     """
 
-    def __init__(
-        self,
-        name: str,
-        puzzle_input: PuzzleInput | None = None,
-    ) -> None:
+    def __init__(self, name: str) -> None:
         self.name = name
-        self.puzzle_input = puzzle_input
-        self.steps: list[SolutionFunction] = []
+        self.steps: list[Callable[[], PuzzleStepResult]] = []
 
     def __repr__(self) -> str:
         return f'<{self.__class__.__name__}: {self.name}>'
@@ -58,20 +52,32 @@ class Puzzle(Generic[PuzzleInput]):
     def __str__(self) -> str:
         return self.name
 
+    def with_input(self, puzzle_input: U) -> Callable[
+        [Callable[Concatenate[U, P], T]],
+        Callable[P, T],
+    ]:
+        def decorator(fn: Callable[Concatenate[U, P], T]) -> Callable[P, T]:
+            def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
+                return fn(puzzle_input, *args, **kwargs)
+
+            return wrapper
+
+        return decorator  # type: ignore[return-value] # pending issue 9
+
     def solution(
         self,
-        fn: SolutionFunction,
-    ) -> SolutionFunction:
+        fn: Callable[[], PuzzleStepResult],
+    ) -> Callable[[], PuzzleStepResult]:
         """Register a solution function for the puzzle.
 
         The function takes the puzzle input as argument and should return a
         solution.
 
         Example:
-            >>> puzzle = Puzzle(title="double", puzzle_input=12)
+            >>> puzzle = Puzzle(title="should be two")
             >>> @puzzle.solution
-            ... def double_input(number):
-            ...     return number * 2
+            ... def get_two():
+            ...     return 2
         """
         self.steps.append(fn)
         return fn
@@ -92,7 +98,7 @@ class Puzzle(Generic[PuzzleInput]):
         solutions: list[PuzzleSolution] = []
 
         for solve_step in self.steps:
-            solution = solve_step(self.puzzle_input)
+            solution = solve_step()
 
             solutions.append(PuzzleSolution(
                 str(solution) if solution is not None
