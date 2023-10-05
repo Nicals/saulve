@@ -41,3 +41,9 @@ class WrongAttributeType(ModuleImportError):
     def __init__(self, attr_name: str, expected_type: Type) -> None:
         msg = f"{attr_name} is not a {expected_type.__name__} instance."
         super().__init__(msg)
+
+
+class WrongStepSolution(SaulveError):
+    """Raised when the solution returned by a puzzle step is not the expected
+    one.
+    """
