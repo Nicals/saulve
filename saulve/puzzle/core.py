@@ -1,10 +1,10 @@
 """Declare puzzle and their associated solution.
 """
 
-from functools import wraps
-from typing import Callable, Concatenate, NamedTuple, ParamSpec, TypeVar
+from typing import Callable, NamedTuple
 
-from .errors import PuzzleHasNoSolution, WrongStepSolution
+from ..errors import PuzzleHasNoSolution, WrongStepSolution
+from .common import PuzzleStepResult
 
 __all__ = ['Puzzle']
 
@@ -21,26 +21,17 @@ class PuzzleSolution(NamedTuple):
         return self.solution is not None
 
 
-# The response of a puzzle step.
-PuzzleStepResponse = int | str
-# Return value of a puzzle step. None indicates an unsolved step.
-PuzzleStepResult = PuzzleStepResponse | None
-
-
-T = TypeVar('T')
-U = TypeVar('U')
-
-P = ParamSpec('P')
-
-
 class PuzzleStep:
     """A linked linked of solution step functions.
+
+    The solution function can either return a response or None. A None return
+    value is considered a solution without implemented response.
     """
-    def __init__(self, fn: Callable[P, PuzzleStepResult]):
+    def __init__(self, fn: Callable[[], PuzzleStepResult]):
         self.fn = fn
         self._next: PuzzleStep | None = None
 
-    def push_step(self, fn: Callable[P, PuzzleStepResult]) -> 'PuzzleStep':
+    def push_step(self, fn: Callable[[], PuzzleStepResult]) -> 'PuzzleStep':
         """Add a new solution function step at the end of the structure.
         """
         if self._next is not None:
@@ -77,8 +68,7 @@ class PuzzleStep:
 class Puzzle:
     """Holds solutions of a puzzle and its input data.
 
-    A puzzle is first defined by its name and input.
-    Next, some solution functions steps are registered by decorating them with
+    Some solution functions steps are registered by decorating them with
     the `solution` decorator.
 
     Arguments:
@@ -86,62 +76,17 @@ class Puzzle:
 
     Attributes:
         name: A verbose title for the current puzzle
-        steps: A list of callable implementing puzzle solutions
     """
 
     def __init__(self, name: str) -> None:
         self.name = name
         self._steps: PuzzleStep | None = None
-        self.steps: list[Callable[[], PuzzleStepResult]] = []  # XXX: Remove this
 
     def __repr__(self) -> str:
         return f'<{self.__class__.__name__}: {self.name}>'
 
     def __str__(self) -> str:
         return self.name
-
-    def with_input(self, puzzle_input: U) -> Callable[
-        [Callable[Concatenate[U, P], PuzzleStepResult]],
-        Callable[P, PuzzleStepResult],
-    ]:
-        """Injects a value as first argument of the solution step function.
-        """
-        def decorator(
-            fn: Callable[Concatenate[U, P], PuzzleStepResult],
-        ) -> Callable[P, PuzzleStepResult]:
-            @wraps(fn)
-            def wrapper(*args: P.args, **kwargs: P.kwargs) -> PuzzleStepResult:
-                return fn(puzzle_input, *args, **kwargs)
-
-            return wrapper
-
-        return decorator  # type: ignore[return-value] # pending issue 9
-
-
-    def solved(self, solution: PuzzleStepResponse) -> Callable[
-        [Callable[P, PuzzleStepResult]],
-        Callable[P, PuzzleStepResult],
-    ]:
-        """Mark a solution function as solved. The return value of the solution
-        function must match the passed argument to considere the response as
-        correct.
-        """
-        def decorator(
-            fn: Callable[P, PuzzleStepResult],
-        ) -> Callable[P, PuzzleStepResult]:
-            @wraps(fn)
-            def wrapper(*args: P.args, **kwargs: P.kwargs) -> PuzzleStepResult:
-                step_solution = fn(*args, **kwargs)
-
-                if step_solution is not None and step_solution != solution:
-                    raise WrongStepSolution()
-
-                return step_solution
-
-            return wrapper
-
-        return decorator
-
 
     def solution(
         self,

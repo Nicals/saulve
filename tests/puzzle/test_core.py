@@ -3,7 +3,7 @@ from typing import Callable
 import pytest
 
 from saulve.errors import PuzzleHasNoSolution, WrongStepSolution
-from saulve.puzzle import Puzzle, PuzzleStep
+from saulve.puzzle.core import Puzzle, PuzzleStep
 
 
 def _raise_wrong_step_solution() -> None:
@@ -68,18 +68,3 @@ def test_solve_puzzle_steps() -> None:
     assert len(solutions) == 2
     assert solutions[0].solution == '12'
     assert solutions[1].solution == 'second one'
-
-
-@pytest.mark.skip(reason='Should only test the decorator withour the Puzzle')
-def test_injects_puzzle_input() -> None:
-    puzzle = Puzzle(name='Test puzzle')
-
-    @puzzle.solution
-    @puzzle.with_input('foobar')
-    def solution(puzzle_input) -> str:
-        return puzzle_input
-
-    solutions = puzzle.solve()
-
-    assert len(solutions) == 1
-    assert solutions[0].solution == 'foobar'
