@@ -33,20 +33,18 @@ Each module having a `puzzle` attribute that is an instance of `saulve.Puzzle` w
 
 ```python
 # file: my_challenges/euler/problem_001.py
-from saulve import Puzzle
+import saulve
 
-puzzle = Puzzle(name="Multiple of 3 or 5", puzzle_input=1000)
+puzzle = saulve.Puzzle(name="Multiple of 3 or 5")
 ```
 
 Solutions to puzzles are registered by decorating functions with `Puzzle.solution`.
-Solution functions takes one argument that is the `puzzle_input` value passed to the Puzzle
-constructor.
 
 ```python
 # file: my_challenges/euler/problem_001.py
 
 @puzzle.solution
-def solve(limit):
+def solve():
     return 12
 ```
 
@@ -62,11 +60,11 @@ from . import euler
 
 app = App()
 
-app.register_challenge('euler', GenericLoader(euler))
+app.register_challenge('project-euler', GenericLoader(euler))
 ```
 
 The call to `register_challenge` tells *Saulve* that a challenge must be registered under the
-*euler* name (can be anything, it does not need to match the *euler* package name).
+*project-euler* name (can be anything, it does not need to match the *euler* package name).
 The challenge are loaded from the `euler` package using a `GenericLoader` (challenge in a given
 package, one puzzle per module as described above).
 
@@ -78,19 +76,19 @@ Each puzzle is identified by its module name.
 You can list all puzzles registered under a challenge:
 
 ```bash-session
-$ saulve --app challenges euler list
+$ saulve --app challenges project-euler list
 ```
 
 
 To run the solutions functions of a given puzzle:
 
 ```bash-session
-$ saulve --app challenges euler solve problem_001
+$ saulve --app challenges project-euler solve problem_001
 Multiple of 3 or 5:
   233168
 ```
 
-The first argument (`euler`) tells saulve that you want to use the `euler` registered challenge.
+The first argument (`project-euler`) tells saulve that you want to use the `euler` registered challenge.
 
 
 ### Advent of code support
@@ -101,16 +99,16 @@ A module puzzle must have a `puzzle` attribute and some registered solution step
 
 ```python
 # file: my_challenges/advent_of_code/year_2022/day_01.py
-from saulve import Puzzle
+import saulve
 
-puzzle = Puzzle(name='Calorie Counting', puzzle_input='...')
+puzzle = saulve.Puzzle(name='Calorie Counting')
 
 @puzzle.solution
-def solve_first_star(puzzle_input):
+def solve_first_star():
     return 121
 
 @puzzle.solution
-def solve_second_star(puzzle_input):
+def solve_second_star():
     retuirn 1932
 ```
 
